@@ -1,0 +1,35 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Dashboard{% endblock %}
+
+
+{% block content %}
+
+    {% if errors is not empty %}
+        {% for error in errors %}
+            <div class="alert alert-danger" role="alert">
+                {{ error }}
+            </div>
+        {% endfor %}
+    {%endif%}
+
+    <h2 class="mt-5">Dashboard</h2>
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th scope="col">Key</th>
+        <th scope="col">Assignee</th>
+    </tr>
+    </thead>
+    <tbody>
+        {% for issue in issues %}
+            <tr>
+                <td>{{ issue.key }}</td>
+                <td>{{ issue.assignee }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
