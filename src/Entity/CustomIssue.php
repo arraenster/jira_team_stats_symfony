@@ -22,6 +22,11 @@ class CustomIssue implements CustomEntityInterface
     protected $storyPoints;
 
     /**
+     * @var string
+     */
+    protected $status;
+
+    /**
      * @return int
      */
     public function getKey(): string
@@ -69,4 +74,19 @@ class CustomIssue implements CustomEntityInterface
         $this->storyPoints = $storyPoints;
     }
 
+    /**
+     * @return string
+     */
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+
+    /**
+     * @param string $status
+     */
+    public function setStatus(string $status): void
+    {
+        $this->status = $status;
+    }
 }

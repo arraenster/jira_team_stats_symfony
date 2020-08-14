@@ -21,6 +21,7 @@
         <th scope="col">Key</th>
         <th scope="col">Assignee</th>
         <th scope="col">Story Points</th>
+        <th scope="col">Status</th>
     </tr>
     </thead>
     <tbody>
@@ -29,6 +30,7 @@
                 <td>{{ issue.key }}</td>
                 <td>{{ issue.assignee }}</td>
                 <td>{{ issue.storyPoints }}</td>
+                <td>{{ issue.status }}</td>
             </tr>
         {% endfor %}
     </tbody>

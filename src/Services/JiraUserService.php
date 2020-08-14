@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Repository\CustomUserRepository;
 use App\Transformers\CustomUserTransformer;
 use JiraRestApi\Configuration\ConfigurationInterface;
 use JiraRestApi\User\UserService;
@@ -10,12 +11,25 @@ use Psr\Log\LoggerInterface;
 
 class JiraUserService extends UserService
 {
-    function __construct(ConfigurationInterface $configuration = null, LoggerInterface $logger = null, $path = './')
-    {
+
+    /**
+     * @var CustomUserTransformer
+     */
+    protected $customUserTransformer;
+
+    function __construct(
+        CustomUserTransformer $customUserTransformer,
+        ConfigurationInterface $configuration = null,
+        LoggerInterface $logger = null,
+        $path = './'
+    ) {
+
+        $this->customUserTransformer = $customUserTransformer;
+
         parent::__construct($configuration, $logger, $path);
     }
 
-    public function getAllUsers(CustomUserTransformer $customUserTransformer): array
+    public function getAllUsersFromJira(): array
     {
         $params = [
             //'username' => '*', // get all users.
@@ -31,12 +45,27 @@ class JiraUserService extends UserService
             $users = $this->findUsers($params);
 
             foreach ($users as $user) {
-                $customUsers[] = $customUserTransformer->transform($user);
+                $customUsers[] = $this->customUserTransformer->transform($user);
             }
         } catch (JiraException | \JsonMapper_Exception $je) {
             throw new \Exception($je->getMessage(), $je->getCode());
         }
 
         return $customUsers;
+    }
+
+    /**
+     * @param CustomUserRepository $customUserRepository
+     * @return array
+     * @throws \Exception
+     */
+    public function getUsersFromDb(CustomUserRepository $customUserRepository): array
+    {
+        $users = $customUserRepository->findAll();
+        if (empty($users)) {
+            $users = $this->getAllUsersFromJira();
+        }
+
+        return $users;
     }
 }

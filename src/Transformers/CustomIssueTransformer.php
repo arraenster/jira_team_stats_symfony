@@ -16,6 +16,7 @@ class CustomIssueTransformer
         $customIssue->setKey($issueV3->key);
         $customIssue->setAssignee($issueV3->fields->assignee->emailAddress);
         $customIssue->setStoryPoints(!empty($issueV3->fields->customFields['customfield_10028']) ? $issueV3->fields->customFields['customfield_10028'] : 0);
+        $customIssue->setStatus($issueV3->fields->status->name);
 
         return $customIssue;
     }

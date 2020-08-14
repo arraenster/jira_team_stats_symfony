@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Services\JiraIssueService;
+use App\Services\TeamStatsService;
 use JiraRestApi\JiraException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -17,17 +18,10 @@ class DashboardController extends AbstractController
      */
     protected $logger;
 
-    /**
-     * @var CustomIssueTransformer
-     */
-    protected $customIssueTransformer;
-
     function __construct(
-        LoggerInterface $logger,
-        CustomIssueTransformer $customIssueTransformer
+        LoggerInterface $logger
     ) {
         $this->logger = $logger;
-        $this->customIssueTransformer = $customIssueTransformer;
     }
 
     /**
@@ -42,15 +36,42 @@ class DashboardController extends AbstractController
     {
         $sprintIssues = $errors = [];
         try {
-            $sprintIssues = $jiraIssueService->getIssuesPerSprint($sprintId, $this->customIssueTransformer);
+            $sprintIssues = $jiraIssueService->getIssuesPerSprint($sprintId);
         } catch (JiraException $je) {
             $this->logger->error($je->getMessage());
             $errors[] = 'Something went wrong.';
         }
 
-        return $this->render('dashboard/index.html.twig', [
-            'errors' => $errors,
-            'issues' => $sprintIssues,
-        ]);
+        return $this->render(
+            'dashboard/index.html.twig',
+            [
+                'errors' => $errors,
+                'issues' => $sprintIssues,
+            ]
+        );
+    }
+
+    /**
+     * @Route("/dashboard/sprint/{sprintId}", name="dashboard_sprint", requirements={"sprintId"="\d+"}, defaults={1})
+     *
+     * @param int $sprintId
+     * @param TeamStatsService $teamStatsService
+     * @return Response
+     * @throws JiraException
+     * @throws \JsonMapper_Exception
+     */
+    public function sprint(int $sprintId, TeamStatsService $teamStatsService): Response
+    {
+        $errors = [];
+
+        $sprint = $teamStatsService->getStoryPointsByDeveloperPerSprint($sprintId);
+
+        return $this->render(
+            'dashboard/sprint.html.twig',
+            [
+                'errors' => $errors,
+                'sprint' => $sprint,
+            ]
+        );
     }
 }

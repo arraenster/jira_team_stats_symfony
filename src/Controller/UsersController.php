@@ -20,22 +20,15 @@ class UsersController extends AbstractController
     protected $logger;
 
     /**
-     * @var CustomUserTransformer
-     */
-    protected $customUserTransformer;
-
-    /**
      * @var CustomUserRepository
      */
     protected $customUserRepository;
 
     function __construct(
         LoggerInterface $logger,
-        CustomUserTransformer $customUserTransformer,
         CustomUserRepository $customUserRepository
     ) {
         $this->logger = $logger;
-        $this->customUserTransformer = $customUserTransformer;
         $this->customUserRepository = $customUserRepository;
     }
 
@@ -50,7 +43,7 @@ class UsersController extends AbstractController
         $users = $errors = [];
 
         try {
-            $users = $jiraUserService->getAllUsers($this->customUserTransformer);
+            $users = $jiraUserService->getAllUsersFromJira();
 
             $entityManager = $this->getDoctrine()->getManager();
 
@@ -76,9 +69,12 @@ class UsersController extends AbstractController
             $errors[] = 'Something went wrong.';
         }
 
-        return $this->render('users/index.html.twig', [
-            'errors' => $errors,
-            'users' => $users,
-        ]);
+        return $this->render(
+            'users/index.html.twig',
+            [
+                'errors' => $errors,
+                'users' => $users,
+            ]
+        );
     }
 }
