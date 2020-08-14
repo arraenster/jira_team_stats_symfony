@@ -2,7 +2,9 @@
 
 namespace App\Entity;
 
-class CustomIssue
+use App\Interfaces\Entity\CustomEntityInterface;
+
+class CustomIssue implements CustomEntityInterface
 {
     /**
      * @var string
@@ -13,6 +15,11 @@ class CustomIssue
      * @var string`
      */
     protected $assignee;
+
+    /**
+     * @var int
+     */
+    protected $storyPoints;
 
     /**
      * @return int
@@ -44,6 +51,22 @@ class CustomIssue
     public function setAssignee(string $assignee): void
     {
         $this->assignee = $assignee;
+    }
+
+    /**
+     * @return int
+     */
+    public function getStoryPoints(): int
+    {
+        return $this->storyPoints;
+    }
+
+    /**
+     * @param int $storyPoints
+     */
+    public function setStoryPoints(int $storyPoints): void
+    {
+        $this->storyPoints = $storyPoints;
     }
 
 }

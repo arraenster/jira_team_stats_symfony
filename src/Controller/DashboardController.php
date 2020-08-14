@@ -36,6 +36,7 @@ class DashboardController extends AbstractController
      * @param int $sprintId
      * @param JiraIssueService $jiraIssueService
      * @return Response
+     * @throws \JsonMapper_Exception
      */
     public function index(int $sprintId, JiraIssueService $jiraIssueService): Response
     {
